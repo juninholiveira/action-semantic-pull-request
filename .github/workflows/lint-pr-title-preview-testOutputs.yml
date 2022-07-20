@@ -1,4 +1,4 @@
-name: "Lint PR title preview (current branch)"
+name: "Lint PR title preview (current branch, outputErrorMessage enabled)"
 on:
   pull_request:
     types:
@@ -20,4 +20,5 @@ jobs:
         id: lint_pr_title
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: echo ${{ steps.lint_pr_title.outputs.ERROR_MESSAGE }}
+      - run: echo '${{ steps.lint_pr_title.outputs.ERROR_MESSAGE }}'
+          
