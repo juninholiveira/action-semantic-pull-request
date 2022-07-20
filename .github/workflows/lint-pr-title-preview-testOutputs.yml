@@ -23,10 +23,9 @@ jobs:
       #- name: Echo Output Error Message
         #if: always()
         #run: echo '${{ steps.lint_pr_title.outputs.ERROR_MESSAGE }}'
-        
-      - name: Create comment
+      - name: Comment on PR 
         if: always()
-        uses: peter-evans/create-or-update-comment@v2
+        uses: marocchino/sticky-pull-request-comment@v2
         with:
-          body: ${{ steps.lint_pr_title.outputs.ERROR_MESSAGE }}
+          message: ${{ steps.lint_pr_title.outputs.ERROR_MESSAGE }}
           
