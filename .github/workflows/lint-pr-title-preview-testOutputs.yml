@@ -20,7 +20,12 @@ jobs:
         id: lint_pr_title
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Echo Output Error Message
-        if: always()
-        run: echo '${{ steps.lint_pr_title.outputs.ERROR_MESSAGE }}'
+      #- name: Echo Output Error Message
+        #if: always()
+        #run: echo '${{ steps.lint_pr_title.outputs.ERROR_MESSAGE }}'
+        
+      - name: Create comment
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          body: ${{ steps.lint_pr_title.outputs.ERROR_MESSAGE }}
           
