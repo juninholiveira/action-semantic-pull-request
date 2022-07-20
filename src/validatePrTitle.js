@@ -138,6 +138,6 @@ module.exports = async function validatePrTitle(
 
     throw new Error(message);
 
-    // sdfsdf sdfgsdfg asdfasdf
+    // sdfsdf sdfgsdfg asdfasdf sdfsdf
   }
 };
