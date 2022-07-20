@@ -1,8 +1,8 @@
-const core = require('@actions/core');
 const conventionalCommitsConfig = require('conventional-changelog-conventionalcommits');
 const conventionalCommitTypes = require('conventional-commit-types');
 const parser = require('conventional-commits-parser').sync;
 const formatMessage = require('./formatMessage');
+const raiseError = require('./raiseError');
 
 const defaultTypes = Object.keys(conventionalCommitTypes.types);
 
@@ -16,7 +16,8 @@ module.exports = async function validatePrTitle(
     subjectPattern,
     subjectPatternError,
     headerPattern,
-    headerPatternCorrespondence
+    headerPatternCorrespondence,
+    outputErrorMessage
   } = {}
 ) {
   if (!types) types = defaultTypes;
@@ -54,19 +55,24 @@ module.exports = async function validatePrTitle(
 
   if (!result.type) {
     raiseError(
-      `No release type found in pull request title "${prTitle}". Add a prefix to indicate what kind of release this pull request corresponds to. For reference, see https://www.conventionalcommits.org/\n\n${printAvailableTypes()}`
+      `No release type found in pull request title "${prTitle}". Add a prefix to indicate what kind of release this pull request corresponds to. For reference, see https://www.conventionalcommits.org/\n\n${printAvailableTypes()}`,
+      outputErrorMessage
     );
   }
 
   if (!result.subject) {
-    raiseError(`No subject found in pull request title "${prTitle}".`);
+    raiseError(
+      `No subject found in pull request title "${prTitle}".`,
+      outputErrorMessage
+    );
   }
 
   if (!types.includes(result.type)) {
     raiseError(
       `Unknown release type "${
         result.type
-      }" found in pull request title "${prTitle}". \n\n${printAvailableTypes()}`
+      }" found in pull request title "${prTitle}". \n\n${printAvailableTypes()}`,
+      outputErrorMessage
     );
   }
 
@@ -75,7 +81,7 @@ module.exports = async function validatePrTitle(
     if (scopes) {
       message += ` Use one of the available scopes: ${scopes.join(', ')}.`;
     }
-    raiseError(message);
+    raiseError(message, outputErrorMessage);
   }
 
   const givenScopes = result.scope
@@ -91,7 +97,8 @@ module.exports = async function validatePrTitle(
         ','
       )}" found in pull request title "${prTitle}". Use one of the available scopes: ${scopes.join(
         ', '
-      )}.`
+      )}.`,
+      outputErrorMessage
     );
   }
 
@@ -102,7 +109,8 @@ module.exports = async function validatePrTitle(
     raiseError(
       `Disallowed ${
         disallowedScopes.length === 1 ? 'scope was' : 'scopes were'
-      } found: ${disallowScopes.join(', ')}`
+      } found: ${disallowScopes.join(', ')}`,
+      outputErrorMessage
     );
   }
 
@@ -113,7 +121,7 @@ module.exports = async function validatePrTitle(
         title: prTitle
       });
     }
-    raiseError(message);
+    raiseError(message, outputErrorMessage);
   }
 
   if (subjectPattern) {
@@ -131,13 +139,5 @@ module.exports = async function validatePrTitle(
         `The subject "${result.subject}" found in pull request title "${prTitle}" isn't an exact match for the configured pattern "${subjectPattern}". Please provide a subject that matches the whole pattern exactly.`
       );
     }
-  }
-
-  function raiseError(message) {
-    core.setOutput('ERROR_MESSAGE', message);
-
-    throw new Error(message);
-
-    // Test 1
   }
 };

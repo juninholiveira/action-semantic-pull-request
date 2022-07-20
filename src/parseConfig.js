@@ -74,6 +74,13 @@ module.exports = function parseConfig() {
     ignoreLabels = ConfigParser.parseEnum(process.env.INPUT_IGNORELABELS);
   }
 
+  let outputErrorMessage;
+  if (process.env.INPUT_OUTPUTERRORMESSAGE) {
+    outputErrorMessage = ConfigParser.parseBoolean(
+      process.env.INPUT_OUTPUTERRORMESSAGE
+    );
+  }
+
   return {
     types,
     scopes,
@@ -87,6 +94,7 @@ module.exports = function parseConfig() {
     validateSingleCommit,
     validateSingleCommitMatchesPrTitle,
     githubBaseUrl,
-    ignoreLabels
+    ignoreLabels,
+    outputErrorMessage
   };
 };
