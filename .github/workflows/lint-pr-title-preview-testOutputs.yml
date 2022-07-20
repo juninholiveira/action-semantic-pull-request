@@ -20,5 +20,7 @@ jobs:
         id: lint_pr_title
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          oututErrorMessage: true
       - run: echo '${{ steps.lint_pr_title.outputs.ERROR_MESSAGE }}'
           
